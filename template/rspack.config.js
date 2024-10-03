@@ -1,5 +1,7 @@
 const rspack = require("@rspack/core");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -57,16 +59,31 @@ module.exports = {
       minSize: 20000,
       maxSize: 50000,
       cacheGroups: {
-        vendor: {
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+        vendors: {
           test: /[\\/]node_modules[\\/]/,
           name: "vendors",
           chunks: "all",
-          enforce: true,
+          priority: -10,
         },
       },
     },
     runtimeChunk: "single",
     minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+          },
+        },
+        extractComments: false,
+      }),
+    ],
     sideEffects: true,
     usedExports: true,
   },
@@ -81,9 +98,15 @@ module.exports = {
         removeRedundantAttributes: true,
       },
     }),
-
     new rspack.CssExtractRspackPlugin({
       filename: "[name].[contenthash].css",
+    }),
+    new CompressionPlugin({
+      filename: "[name].[contenthash].js.gz",
+      algorithm: "gzip",
+      test: /\.(js|css|html|svg)$/,
+      threshold: 10240,
+      minRatio: 0.8,
     }),
   ],
   devServer: {

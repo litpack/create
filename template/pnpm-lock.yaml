@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      babel-plugin-transform-define:
-        specifier: ^2.1.4
-        version: 2.1.4
       lit:
         specifier: ^3.2.0
         version: 3.2.0
@@ -48,6 +45,12 @@ importers:
       babel-loader:
         specifier: ^9.2.1
         version: 9.2.1(@babel/core@7.25.7)(webpack@5.95.0)
+      babel-plugin-transform-define:
+        specifier: ^2.1.4
+        version: 2.1.4
+      compression-webpack-plugin:
+        specifier: ^11.1.0
+        version: 11.1.0(webpack@5.95.0)
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(@rspack/core@1.0.8)(webpack@5.95.0)
@@ -72,6 +75,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.13
         version: 3.4.13
+      terser-webpack-plugin:
+        specifier: ^5.3.10
+        version: 5.3.10(webpack@5.95.0)
       ts-loader:
         specifier: ^9.5.1
         version: 9.5.1(typescript@5.6.2)(webpack@5.95.0)
@@ -1221,6 +1227,12 @@ packages:
   compressible@2.0.18:
     resolution: {integrity: sha512-AF3r7P5dWxL8MxyITRMlORQNaOA2IkAFaTr4k7BUumjPtRpGDTZpl0Pb1XCO6JeDCBdp126Cgs9sMxqSjgYyRg==}
     engines: {node: '>= 0.6'}
+
+  compression-webpack-plugin@11.1.0:
+    resolution: {integrity: sha512-zDOQYp10+upzLxW+VRSjEpRRwBXJdsb5lBMlRxx1g8hckIFBpe3DTI0en2w7h+beuq89576RVzfiXrkdPGrHhA==}
+    engines: {node: '>= 18.12.0'}
+    peerDependencies:
+      webpack: ^5.1.0
 
   compression@1.7.4:
     resolution: {integrity: sha512-jaSIDzP9pZVS4ZfQ+TzvtiWhdpFhE2RDHz8QJkpX9SIpLq88VueF5jJw6t+6CUQcAoA6t+x89MLrWAqpfDE8iQ==}
@@ -4156,6 +4168,12 @@ snapshots:
   compressible@2.0.18:
     dependencies:
       mime-db: 1.53.0
+
+  compression-webpack-plugin@11.1.0(webpack@5.95.0):
+    dependencies:
+      schema-utils: 4.2.0
+      serialize-javascript: 6.0.2
+      webpack: 5.95.0
 
   compression@1.7.4:
     dependencies:
