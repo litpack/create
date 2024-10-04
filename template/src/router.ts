@@ -13,6 +13,12 @@ const routers: { [key: string]: Route } = {
     meta: { title: "About", description: "Learn more about us" },
     layout: () => import("@/layouts/navbar")
   },
+  "/gallery": {
+    component: () => import("@/pages/image-gallery"),
+    preload: false,
+    meta: { title: "gallery", description: "Out image gallery" },
+    layout: () => import("@/layouts/navbar")
+  },
   "*": {
     component: () => import("@/pages/not-found"),
     preload: false,

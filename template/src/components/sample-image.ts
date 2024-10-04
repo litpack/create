@@ -2,7 +2,9 @@ import { html, LitElement, css } from 'lit';
 import { ReusableComponent } from '@/decorators/reusable-component';
 import { property } from 'lit/decorators.js';
 
-@ReusableComponent({ tag: 'reusable-image' })
+@ReusableComponent({
+  tag: 'reusable-image'
+})
 export class SampleImage extends LitElement {
   static styles = css`
     .image-container {
@@ -11,6 +13,8 @@ export class SampleImage extends LitElement {
     img {
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 100%;
+      height: auto;
     }
   `;
 
@@ -45,9 +49,7 @@ export class SampleImage extends LitElement {
 
   render() {
     return html`
-      <div class="image-container">
-        <img src="${this.src}" alt="${this.alt}" />
-      </div>
+      <img src="${this.src}" alt="${this.alt}" />
     `;
   }
 }

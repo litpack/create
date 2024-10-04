@@ -4,6 +4,8 @@ import "@/components/sample-image";
 
 @PageComponent({ tag: "about-page" })
 export default class About extends LitElement {
+
+
   static styles = css`
     h1 {
       background-color: #16a34a;

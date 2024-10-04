@@ -1,8 +1,8 @@
-import { SignalWatcher } from '@lit-labs/preact-signals';
 import { LitElement } from 'lit';
 
 interface ReusableComponentOptions {
   tag: string;
+  observedAttributes?: string[];
 }
 
 export function ReusableComponent<T extends { new (...args: any[]): LitElement }>(
@@ -13,23 +13,25 @@ export function ReusableComponent<T extends { new (...args: any[]): LitElement }
       Object.setPrototypeOf(target.prototype, LitElement.prototype);
     }
 
-    const OriginalClass = SignalWatcher(target);
-
-    OriginalClass.prototype.createRenderRoot = function () {
-      return this;
-    };
-
-    const originalConnectedCallback = OriginalClass.prototype.connectedCallback;
-    OriginalClass.prototype.connectedCallback = function () {
-      if (originalConnectedCallback) {
-        originalConnectedCallback.call(this);
-      }
-    };
-
-    if (!customElements.get(options.tag)) {
-      customElements.define(options.tag, OriginalClass);
+    const customElementName = options.tag.toLowerCase();
+    if (!customElements.get(customElementName)) {
+      customElements.define(customElementName, target);
     }
 
-    return OriginalClass;
+    Object.defineProperty(target, 'observedAttributes', {
+      value: options.observedAttributes || [],
+      writable: false,
+      configurable: false,
+    });
+
+    target.prototype.attributeChangedCallback = function (
+      name: string,
+      oldValue: string | null,
+      newValue: string | null
+    ) {
+      this.handleAttributeChange(name, oldValue, newValue);
+    };
+
+    return target;
   };
 }

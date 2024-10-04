@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, LitElement, PropertyValues } from "lit";
 import "@/components/sample-image";
 import { PageComponent } from "@/decorators/page-component";
 import { signal, computed, effect } from "@lit-labs/preact-signals";
@@ -11,9 +11,42 @@ export default class Home extends LitElement {
 
   fullName = computed(() => `${this.name.value} ${this.surname.value}`);
 
+  private nameEffectCleanup?: () => void;
+
   constructor() {
     super();
-    effect(() => console.log(this.fullName.value));
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    console.log("Component added to the DOM");
+
+    this.nameEffectCleanup = effect(() => {
+      console.log(`Full name: ${this.fullName.value}`);
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    console.log("Component removed from the DOM");
+
+    if (this.nameEffectCleanup) {
+      this.nameEffectCleanup();
+    }
+  }
+
+  updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    console.log("Component updated!");
+  }
+
+  willUpdate(changedProperties: PropertyValues) {
+    super.willUpdate(changedProperties);
+    console.log("The component is about to update");
+  }
+
+  firstUpdated() {
+    console.log("First update and render done!");
   }
 
   increment() {
@@ -39,7 +72,9 @@ export default class Home extends LitElement {
 
         <div class="text-center mb-6">
           <h2 class="text-xl text-gray-800">Click the button to increment:</h2>
-          <p class="text-2xl font-semibold text-blue-600">${this.count.value}</p>
+          <p class="text-2xl font-semibold text-blue-600">
+            ${this.count.value}
+          </p>
           <button
             @click="${this.increment}"
             class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-all"
@@ -50,9 +85,11 @@ export default class Home extends LitElement {
 
         <div class="text-center mb-6">
           <h2 class="text-xl text-gray-800">Full Name:</h2>
-          <p class="text-2xl font-semibold text-blue-600">${this.fullName.value}</p>
+          <p class="text-2xl font-semibold text-blue-600">
+            ${this.fullName.value}
+          </p>
           <button
-            @click="${() => this.changeName('John')}"
+            @click="${() => this.changeName("John")}"
             class="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition-all"
           >
             Change Name to John

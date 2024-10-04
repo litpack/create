@@ -4,6 +4,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "experimentalDecorators": true,
+    "useDefineForClassFields": false,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
