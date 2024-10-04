@@ -101,10 +101,6 @@ module.exports = {
       },
       preload: ['.css', '.js'],
     }),
-    new rspack.HotModuleReplacementPlugin({ 
-      multiStep: true,
-      timeout: 2000,
-    }),
     ...(isProduction ? [
       new CompressionPlugin({
         filename: "[name].[contenthash].js.gz",
