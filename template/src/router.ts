@@ -39,7 +39,6 @@ export default class Router {
   private middleware: Middleware[] = [];
   private history: string[] = [];
   private scrollPositions: { [key: string]: number } = {};
-  // private loading: boolean = false;
   private plugins: Function[] = [];
 
   init() {
@@ -61,7 +60,7 @@ export default class Router {
     }
 
     if (matchedRoute) {
-      if (await this.runMiddleware()) {
+      if (await this.runMiddleware(params)) {
         if (matchedRoute.beforeEnter) {
           const canProceed = await matchedRoute.beforeEnter();
           if (!canProceed) return;
@@ -86,11 +85,7 @@ export default class Router {
         componentInstance.render();
 
         if (remainingPath.length > 0 && matchedRoute.children) {
-          this.navigateNested(
-            componentInstance,
-            matchedRoute.children,
-            remainingPath
-          );
+          await this.navigateNested(componentInstance, matchedRoute.children, remainingPath);
         }
 
         if (matchedRoute.afterEnter) {
@@ -109,15 +104,14 @@ export default class Router {
       await this.handleNotFound(rootElement);
     }
   }
-
   // async loadLayout(layoutName: string) {
   //   const { default: Layout } = await import(`./layouts/${layoutName}`);
   //   return new Layout(); // Instantiate the layout
   // }
 
-  async runMiddleware(): Promise<boolean> {
+  async runMiddleware(params?: any): Promise<boolean> {
     for (const mw of this.middleware) {
-      const result = await mw();
+      const result = await mw(params);
       if (!result) return false;
     }
     return true;
@@ -163,7 +157,7 @@ export default class Router {
     childInstance.render();
 
     if (remainingSegments.length > 0 && nextRoute.children) {
-      this.navigateNested(childInstance, nextRoute.children, remainingSegments);
+      await this.navigateNested(childInstance, nextRoute.children, remainingSegments);
     }
   }
 
@@ -172,14 +166,15 @@ export default class Router {
     let remainingPath = pathSegments;
     let params: { [key: string]: string } | null = null;
     let queryParams: { [key: string]: string } | null = null;
-  
+
     const pathWithQuery = pathSegments.join("/");
     const queryIndex = pathWithQuery.indexOf("?");
     const queryString = queryIndex !== -1 ? pathWithQuery.slice(queryIndex + 1) : "";
+    
     if (queryString) {
       queryParams = this.parseQueryParams(queryString);
     }
-  
+
     if (pathSegments.length === 0 || (pathSegments.length === 1 && pathSegments[0] === "")) {
       currentRoute = this.routes["/"];
       remainingPath = [];
@@ -191,13 +186,13 @@ export default class Router {
           remainingPath = remainingPath.slice(1);
           break;
         }
-  
+
         for (const routeKey in this.routes) {
           const routePattern = routeKey.split("/").filter(Boolean);
           if (routePattern.length === pathSegments.length) {
             const matchParams: { [key: string]: string } = {};
             let isMatch = true;
-  
+
             for (let i = 0; i < routePattern.length; i++) {
               if (routePattern[i].startsWith(":")) {
                 matchParams[routePattern[i].slice(1)] = pathSegments[i];
@@ -206,7 +201,7 @@ export default class Router {
                 break;
               }
             }
-  
+
             if (isMatch) {
               currentRoute = this.routes[routeKey];
               params = matchParams;
@@ -217,15 +212,13 @@ export default class Router {
         }
       }
     }
-  
+
     if (!currentRoute) {
       currentRoute = this.routes["*"];
     }
-  
+
     return [currentRoute, remainingPath, params, queryParams];
   }
-  
-  
 
   parseQueryParams(queryString: string): { [key: string]: string } {
     return queryString.split("&").reduce((params, param) => {
