@@ -16,7 +16,6 @@ const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 (async () => {
   const packageManager = await promptPackageManager();
   
-  // Check if inquirer is installed
   const isInquirerInstalled = await checkInquirerInstalled();
   if (!isInquirerInstalled) {
     console.log('inquirer is not installed. Installing it...');
@@ -51,7 +50,6 @@ async function promptPackageManager() {
 
 async function checkInquirerInstalled() {
   try {
-    // Attempt to require inquirer
     require.resolve('inquirer');
     return true;
   } catch {
@@ -89,25 +87,30 @@ async function copyTemplate(src, dest) {
 }
 
 function projectCreated(packageManager) {
-  console.log(`Project ${projectName} created successfully!`);
+  console.log(`🎉 Project ${projectName} created successfully!`);
 
   try {
     execSync(`${packageManager} --version`, { stdio: 'ignore' });
-    console.log(`${packageManager} is already installed.`);
+    console.log(`✅ ${packageManager} is already installed.`);
   } catch {
-    console.log(`${packageManager} is not installed. Please install ${packageManager} to manage dependencies.`);
+    console.log(`❌ ${packageManager} is not installed. Please install ${packageManager} to manage dependencies.`);
     console.log(`You can install ${packageManager} using the following command:`);
     if (packageManager === 'pnpm') {
-      console.log('npm install -g pnpm');
+      console.log('📦 npm install -g pnpm');
     } else if (packageManager === 'yarn') {
-      console.log('npm install -g yarn');
+      console.log('📦 npm install -g yarn');
     } else if (packageManager === 'bun') {
-      console.log('npm install -g bun');
+      console.log('📦 npm install -g bun');
     }
   }
 
-  console.log(`\nTo get started, navigate into your project folder:`);
-  console.log(`cd ${projectName}`);
+  console.log(`\n🚀 To get started, navigate into your project folder:`);
+  console.log(`📁 cd ${projectName}`);
   console.log(`Then, install the dependencies with:`);
-  console.log(`${packageManager} install`);
+  console.log(`🔗 ${packageManager} install`);
+
+  console.log(`\n🛠️ You can run the following lifecycle scripts:`);
+  console.log(`1. 🧹 Clean the build directory: ${packageManager} run clean`);
+  console.log(`2. 🏗️ Build the project: ${packageManager} run build`);
+  console.log(`3. 🚦 Start the development server: ${packageManager} start`);
 }
