@@ -16,6 +16,7 @@ const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 (async () => {
   const packageManager = await promptPackageManager();
   
+  // Check if inquirer is installed
   const isInquirerInstalled = await checkInquirerInstalled();
   if (!isInquirerInstalled) {
     console.log('inquirer is not installed. Installing it...');
@@ -36,7 +37,7 @@ const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 })();
 
 async function promptPackageManager() {
-  const inquirer = await import('inquirer');
+  const inquirer = (await import('inquirer')).default;
   const answers = await inquirer.prompt([
     {
       type: 'list',
@@ -50,6 +51,7 @@ async function promptPackageManager() {
 
 async function checkInquirerInstalled() {
   try {
+    // Attempt to require inquirer
     require.resolve('inquirer');
     return true;
   } catch {
