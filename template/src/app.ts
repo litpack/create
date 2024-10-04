@@ -21,6 +21,6 @@ router.init();
 
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
-    router.init();
+    console.log('Module updated!');
   });
 }

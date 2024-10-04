@@ -1,8 +1,5 @@
 interface ImportMeta {
-    hot?: {
-      accept(callback: () => void): void;
-    };
-  }
-  
-
-  
+  hot?: {
+    accept(callback: () => void): void;
+  };
+}

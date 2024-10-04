@@ -1,9 +1,8 @@
-const rspack = require("@rspack/core");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
-
+const rspack = require("@rspack/core");
 const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
@@ -44,7 +43,7 @@ module.exports = {
       {
         test: /\.css$/i,
         use: [
-          rspack.CssExtractRspackPlugin.loader,
+          "style-loader",
           "css-loader",
           "postcss-loader",
         ],
@@ -102,8 +101,9 @@ module.exports = {
       },
       preload: ['.css', '.js'],
     }),
-    new rspack.CssExtractRspackPlugin({
-      filename: "[name].[contenthash].css",
+    new rspack.HotModuleReplacementPlugin({ 
+      multiStep: true,
+      timeout: 2000,
     }),
     ...(isProduction ? [
       new CompressionPlugin({
