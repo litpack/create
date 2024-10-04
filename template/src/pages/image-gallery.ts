@@ -25,7 +25,7 @@ export default class ImageGallery extends LitElement {
 
   render() {
     return html`
-      <div class="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-xl">
+      <div class="p-6 max-w-[60rem] mx-auto bg-white rounded-lg shadow-2xl">
         <h1 class="text-3xl font-bold text-center mb-4">Our Image Gallery</h1>
         <div class="gallery">
           ${this.images.value.map(
