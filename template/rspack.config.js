@@ -123,7 +123,6 @@ module.exports = {
         minRatio: 0.8,
       }),
     ]),
-    new rspack.HotModuleReplacementPlugin(),
   ],
   devServer: {
     static: {
