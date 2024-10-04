@@ -3,7 +3,6 @@
 const fs = require('fs').promises;
 const path = require('path');
 const { execSync } = require('child_process');
-const inquirer = require('inquirer');
 
 const projectName = process.argv[2];
 
@@ -14,29 +13,59 @@ if (!projectName) {
 
 const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 
-inquirer
-  .prompt([
+(async () => {
+  const packageManager = await promptPackageManager();
+  
+  const isInquirerInstalled = await checkInquirerInstalled();
+  if (!isInquirerInstalled) {
+    console.log('inquirer is not installed. Installing it...');
+    await installInquirer(packageManager);
+  }
+
+  const templateDir = path.join(__dirname, 'template');
+  const targetDir = path.join(process.cwd(), projectName);
+
+  try {
+    await fs.mkdir(targetDir, { recursive: true });
+    await copyTemplate(templateDir, targetDir);
+    projectCreated(packageManager);
+  } catch (err) {
+    console.error(`Error creating project directory: ${err}`);
+    process.exit(1);
+  }
+})();
+
+async function promptPackageManager() {
+  const inquirer = await import('inquirer');
+  const answers = await inquirer.prompt([
     {
       type: 'list',
       name: 'packageManager',
       message: 'Please choose a package manager:',
       choices: validPackageManagers,
     },
-  ])
-  .then(async (answers) => {
-    const packageManager = answers.packageManager;
-    const templateDir = path.join(__dirname, 'template');
-    const targetDir = path.join(process.cwd(), projectName);
+  ]);
+  return answers.packageManager;
+}
 
-    try {
-      await fs.mkdir(targetDir, { recursive: true });
-      await copyTemplate(templateDir, targetDir);
-      projectCreated(packageManager);
-    } catch (err) {
-      console.error(`Error creating project directory: ${err}`);
-      process.exit(1);
-    }
-  });
+async function checkInquirerInstalled() {
+  try {
+    require.resolve('inquirer');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function installInquirer(packageManager) {
+  try {
+    execSync(`${packageManager} install inquirer`, { stdio: 'inherit' });
+    console.log('inquirer installed successfully.');
+  } catch (err) {
+    console.error(`Failed to install inquirer: ${err}`);
+    process.exit(1);
+  }
+}
 
 async function copyTemplate(src, dest) {
   const items = await fs.readdir(src);
