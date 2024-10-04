@@ -33,6 +33,9 @@
   },
   "dependencies": {
     "@lit-labs/preact-signals": "^1.0.2",
-    "lit": "^3.2.0"
+    "inversify": "^6.0.2",
+    "ky": "^1.7.2",
+    "lit": "^3.2.0",
+    "reflect-metadata": "^0.2.2"
   }
 }
