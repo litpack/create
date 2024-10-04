@@ -15,7 +15,7 @@ module.exports = {
     globalObject: "self",
     assetModuleFilename: "assets/[hash][ext][query]",
   },
-
+  
   mode: isProduction ? "production" : "development",
   devtool: isProduction ? false : "source-map",
   module: {
@@ -99,8 +99,9 @@ module.exports = {
         extractComments: false,
       }),
     ],
-    sideEffects: true,
+    sideEffects: false,
     usedExports: true,
+    moduleIds: 'deterministic',
   },
   plugins: [
     new HtmlWebpackPlugin({
