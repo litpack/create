@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
@@ -12,10 +13,10 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     publicPath: "/",
     clean: true,
-    globalObject: 'self'
+    globalObject: 'self',
   },
-  devtool: isProduction ? false : 'source-map',
   mode: isProduction ? 'production' : 'development',
+  devtool: isProduction ? false : 'source-map',
   module: {
     rules: [
       {
@@ -35,12 +36,7 @@ module.exports = {
               ["@babel/plugin-proposal-decorators", { legacy: true }],
               "@babel/plugin-transform-class-properties",
               "@babel/plugin-syntax-dynamic-import",
-              [
-                "transform-define",
-                {
-                  "process.env.LIT_DEV_MODE": "'false'",
-                },
-              ],
+              ["transform-define", { "process.env.LIT_DEV_MODE": "'false'" }],
             ],
           },
         },
@@ -59,7 +55,7 @@ module.exports = {
     extensions: [".ts", ".js"],
   },
   optimization: {
-    runtimeChunk:true,
+    runtimeChunk: "single",
     splitChunks: {
       chunks: "all",
       minSize: 20000,
@@ -78,7 +74,6 @@ module.exports = {
         },
       },
     },
-    runtimeChunk: "single",
     minimize: true,
     minimizer: [
       new TerserPlugin({
@@ -97,7 +92,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
       inject: "body",
-      filename: "index.html",
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -108,7 +102,7 @@ module.exports = {
     new rspack.CssExtractRspackPlugin({
       filename: "[name].[contenthash].css",
     }),
-    ...(!isProduction ? [] : [
+    ...(isProduction ? [
       new CompressionPlugin({
         filename: "[name].[contenthash].js.gz",
         algorithm: "gzip",
@@ -124,7 +118,7 @@ module.exports = {
         threshold: 10240,
         minRatio: 0.8,
       }),
-    ]),
+    ] : []),
   ],
   devServer: {
     static: {
@@ -140,5 +134,5 @@ module.exports = {
     devMiddleware: {
       writeToDisk: false,
     },
-  }
+  },
 };

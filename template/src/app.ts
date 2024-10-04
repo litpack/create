@@ -1,15 +1,22 @@
-import Router from './router';
-import './global.css';
+import Router from "./router";
+import "./global.css";
 
 const router = new Router();
 
-document.body.addEventListener('click', (event) => {
+document.body.addEventListener("click", (event) => {
   if (event.target instanceof HTMLAnchorElement) {
     event.preventDefault();
-    const path = event.target.getAttribute('href')!;
-    history.pushState({}, '', path);
+    const path = event.target.getAttribute("href")!;
+    history.pushState({}, "", path);
     router.navigate(path);
   }
 });
 
 router.init();
+
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    router.init();
+  });
+}
+
