@@ -12,6 +12,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     publicPath: "/",
     clean: true,
+    globalObject: 'self'
   },
   devtool: isProduction ? false : 'source-map',
   mode: isProduction ? 'production' : 'development',
@@ -58,6 +59,7 @@ module.exports = {
     extensions: [".ts", ".js"],
   },
   optimization: {
+    runtimeChunk:true,
     splitChunks: {
       chunks: "all",
       minSize: 20000,
