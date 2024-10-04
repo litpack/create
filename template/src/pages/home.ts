@@ -1,6 +1,6 @@
 import { html, LitElement } from "lit";
-import "../components/sample-image";
-import { PageComponent } from "../decorators/page-component";
+import "@/components/sample-image";
+import { PageComponent } from "@/decorators/page-component";
 import { signal, computed, effect } from "@lit-labs/preact-signals";
 
 @PageComponent({ tag: "home-page" })

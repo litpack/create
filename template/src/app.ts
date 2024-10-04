@@ -1,7 +1,12 @@
-import Router from "./router";
-import "./global.css";
+import Router from "@/utils/navigation";
+import routers from "@/router";
+import "@/global.css";
 
-const router = new Router();
+const router = new Router(routers);
+
+window.addEventListener("popstate", () => {
+  router.navigate(window.location.pathname);
+});
 
 document.body.addEventListener("click", (event) => {
   if (event.target instanceof HTMLAnchorElement) {
@@ -19,4 +24,3 @@ if (import.meta.hot) {
     router.init();
   });
 }
-

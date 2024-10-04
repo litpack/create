@@ -53,6 +53,9 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".js"],
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
   },
   optimization: {
     runtimeChunk: "single",

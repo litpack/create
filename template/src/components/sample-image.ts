@@ -1,5 +1,5 @@
 import { html, LitElement, css } from 'lit';
-import { ReusableComponent } from '../decorators/reusable-component';
+import { ReusableComponent } from '@/decorators/reusable-component';
 import { property } from 'lit/decorators.js';
 
 @ReusableComponent({ tag: 'reusable-image' })

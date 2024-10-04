@@ -1,6 +1,6 @@
 import { html, css, LitElement } from "lit";
-import { PageComponent } from "../decorators/page-component";
-import "../components/sample-image";
+import { PageComponent } from "@/decorators/page-component";
+import "@/components/sample-image";
 
 @PageComponent({ tag: "about-page" })
 export default class About extends LitElement {
