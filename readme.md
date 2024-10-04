@@ -1,9 +1,9 @@
-Here's a `README.md` file for your project based on the provided information:
+Here’s an updated `README.md` file reflecting your project's actual dependencies and setup:
 
 ```markdown
-# Frontend Boilerplate with Rspack, TypeScript, and TailwindCSS
+# Frontend Boilerplate with Rspack, Lit.js, Babel, TypeScript, and TailwindCSS
 
-This is a frontend boilerplate project set up using Rspack, TypeScript, and TailwindCSS, designed to help you quickly start your development process while maintaining modern build optimizations.
+This is a frontend boilerplate project set up using Rspack, Lit.js, TypeScript, TailwindCSS, and Preact Signals, Babel designed to help you quickly start your development process while maintaining modern build optimizations.
 
 ## Table of Contents
 
@@ -18,9 +18,10 @@ This is a frontend boilerplate project set up using Rspack, TypeScript, and Tail
 ## Features
 
 - **Modern JavaScript and TypeScript support** with Babel
+- **Reactive state management** using Preact Signals
 - **Hot Module Replacement (HMR)** for efficient development
-- **CSS processing** with PostCSS and TailwindCSS
-- **Code splitting and optimization** using Rspack
+- **CSS processing** with TailwindCSS and PostCSS
+- **Optimized asset handling** using Rspack
 - **Compression** of assets for production
 - **Source maps** for easier debugging in development
 
@@ -66,7 +67,7 @@ This project comes with several scripts to help you with your development and bu
 │   ├── app.ts              # Main entry point
 │   └── index.html          # HTML template
 ├── package.json            # Project configuration
-└── webpack.config.js       # Rspack configuration
+└── rspack.config.js        # Rspack configuration
 ```
 
 ## Development
@@ -97,4 +98,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ### Customization
 
-Feel free to customize the text and sections as needed to fit your specific project requirements.
+Feel free to adjust any sections or add additional information that might be relevant to your project. Let me know if you need any further changes!
