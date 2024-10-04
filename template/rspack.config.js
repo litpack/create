@@ -3,7 +3,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
 const rspack = require("@rspack/core");
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
   entry: "./src/app.ts",
@@ -12,17 +12,19 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     publicPath: "/",
     clean: true,
-    globalObject: 'self',
+    globalObject: "self",
+    assetModuleFilename: "assets/[hash][ext][query]",
   },
-  mode: isProduction ? 'production' : 'development',
-  devtool: isProduction ? false : 'source-map',
+
+  mode: isProduction ? "production" : "development",
+  devtool: isProduction ? false : "source-map",
   module: {
     rules: [
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         type: "asset/resource",
         generator: {
-          filename: 'assets/images/[hash][ext][query]',
+          filename: "assets/images/[hash][ext][query]",
         },
       },
       {
@@ -43,7 +45,7 @@ module.exports = {
       {
         test: /\.css$/i,
         use: [
-          "style-loader",
+          rspack.CssExtractRspackPlugin.loader,
           "css-loader",
           "postcss-loader",
         ],
@@ -53,7 +55,7 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js"],
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      "@": path.resolve(__dirname, "src"),
     },
   },
   optimization: {
@@ -62,6 +64,7 @@ module.exports = {
       chunks: "all",
       minSize: 20000,
       maxSize: 50000,
+      minChunks: 1,
       cacheGroups: {
         default: {
           minChunks: 2,
@@ -74,6 +77,12 @@ module.exports = {
           chunks: "all",
           priority: -10,
         },
+        commons: {
+          name: "commons",
+          minChunks: 2,
+          maxInitialRequests: Infinity,
+          minSize: 0,
+        },
       },
     },
     minimize: true,
@@ -82,6 +91,9 @@ module.exports = {
         terserOptions: {
           compress: {
             drop_console: isProduction,
+          },
+          output: {
+            comments: false,
           },
         },
         extractComments: false,
@@ -99,36 +111,39 @@ module.exports = {
         collapseWhitespace: true,
         removeRedundantAttributes: true,
       },
-      preload: ['.css', '.js'],
+      preload: [".css", ".js"],
     }),
-    ...(isProduction ? [
-      new CompressionPlugin({
-        filename: "[name].[contenthash].js.gz",
-        algorithm: "gzip",
-        test: /\.(js|css|html|svg)$/,
-        threshold: 10240,
-        minRatio: 0.8,
-      }),
-      new CompressionPlugin({
-        filename: "[name].[contenthash].js.br",
-        algorithm: "brotliCompress",
-        test: /\.(js|css|html|svg)$/,
-        compressionOptions: { level: 11 },
-        threshold: 10240,
-        minRatio: 0.8,
-      }),
-    ] : []),
+    new rspack.CssExtractRspackPlugin(),
+    ...(isProduction
+      ? [
+          new CompressionPlugin({
+            filename: "[name].[contenthash].js.gz",
+            algorithm: "gzip",
+            test: /\.(js|css|html|svg)$/,
+            threshold: 10240,
+            minRatio: 0.8,
+          }),
+          new CompressionPlugin({
+            filename: "[name].[contenthash].js.br",
+            algorithm: "brotliCompress",
+            test: /\.(js|css|html|svg)$/,
+            compressionOptions: { level: 11 },
+            threshold: 10240,
+            minRatio: 0.8,
+          }),
+        ]
+      : []),
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'),
-      publicPath: '/',
+      directory: path.join(__dirname, "dist"),
+      publicPath: "/",
     },
     compress: isProduction,
     port: 9000,
     hot: true,
     liveReload: false,
-    watchFiles: ['src/**/*'],
+    watchFiles: ["src/**/*"],
     historyApiFallback: true,
     devMiddleware: {
       writeToDisk: false,
