@@ -1,4 +1,4 @@
-Here’s an updated `README.md` file reflecting your project's actual dependencies and setup:
+
 
 ```markdown
 # Frontend Boilerplate with Rspack, Lit.js, Babel, TypeScript, and TailwindCSS
