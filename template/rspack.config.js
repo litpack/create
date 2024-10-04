@@ -13,12 +13,16 @@ module.exports = {
     publicPath: "/",
     clean: true,
   },
+  devtool: isProduction ? false : 'source-map',
   mode: isProduction ? 'production' : 'development',
   module: {
     rules: [
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|jpe?g|gif|svg)$/i,
         type: "asset/resource",
+        generator: {
+          filename: 'assets/images/[hash][ext][query]',
+        },
       },
       {
         test: /\.(tsx?|jsx?)$/,
@@ -41,7 +45,7 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/,
+        test: /\.css$/i,
         use: [
           rspack.CssExtractRspackPlugin.loader,
           "css-loader",
@@ -78,7 +82,7 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: true,
+            drop_console: isProduction,
           },
         },
         extractComments: false,
@@ -97,31 +101,43 @@ module.exports = {
         collapseWhitespace: true,
         removeRedundantAttributes: true,
       },
+      preload: ['.css', '.js'],
     }),
     new rspack.CssExtractRspackPlugin({
       filename: "[name].[contenthash].css",
     }),
-    new CompressionPlugin({
-      filename: "[name].[contenthash].js.gz",
-      algorithm: "gzip",
-      test: /\.(js|css|html|svg)$/,
-      threshold: 10240,
-      minRatio: 0.8,
-    }),
+    ...(!isProduction ? [] : [
+      new CompressionPlugin({
+        filename: "[name].[contenthash].js.gz",
+        algorithm: "gzip",
+        test: /\.(js|css|html|svg)$/,
+        threshold: 10240,
+        minRatio: 0.8,
+      }),
+      new CompressionPlugin({
+        filename: "[name].[contenthash].js.br",
+        algorithm: "brotliCompress",
+        test: /\.(js|css|html|svg)$/,
+        compressionOptions: { level: 11 },
+        threshold: 10240,
+        minRatio: 0.8,
+      }),
+    ]),
+    new rspack.HotModuleReplacementPlugin(),
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, "dist"),
-      publicPath: "/",
+      directory: path.join(__dirname, 'dist'),
+      publicPath: '/',
     },
-    compress: true,
+    compress: isProduction,
     port: 9000,
     hot: true,
-    liveReload: true,
-    watchFiles: ["src/**/*"],
+    liveReload: false,
+    watchFiles: ['src/**/*'],
     historyApiFallback: true,
     devMiddleware: {
-      writeToDisk: true,
+      writeToDisk: false,
     },
-  },
+  }
 };

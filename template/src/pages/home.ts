@@ -1,14 +1,28 @@
 import { html, LitElement } from "lit";
 import "../components/sample-image";
 import { PageComponent } from "../decorators/page-component";
+import { signal, computed, effect } from "@lit-labs/preact-signals";
 
-@PageComponent({ name: "home-page" })
+@PageComponent({ tag: "home-page" })
 export default class Home extends LitElement {
-  createRenderRoot() {
-    return this;
+  count = signal(0);
+  name = signal("Jane");
+  surname = signal("Doe");
+
+  fullName = computed(() => `${this.name.value} ${this.surname.value}`);
+
+  constructor() {
+    super();
+    effect(() => console.log(this.fullName.value));
   }
 
-  private count = 0;
+  increment() {
+    this.count.value++;
+  }
+
+  changeName(newName: string) {
+    this.name.value = newName;
+  }
 
   render() {
     return html`
@@ -25,12 +39,23 @@ export default class Home extends LitElement {
 
         <div class="text-center mb-6">
           <h2 class="text-xl text-gray-800">Click the button to increment:</h2>
-          <p class="text-2xl font-semibold text-blue-600">${this.count}</p>
+          <p class="text-2xl font-semibold text-blue-600">${this.count.value}</p>
           <button
             @click="${this.increment}"
             class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-all"
           >
             Increment
+          </button>
+        </div>
+
+        <div class="text-center mb-6">
+          <h2 class="text-xl text-gray-800">Full Name:</h2>
+          <p class="text-2xl font-semibold text-blue-600">${this.fullName.value}</p>
+          <button
+            @click="${() => this.changeName('John')}"
+            class="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition-all"
+          >
+            Change Name to John
           </button>
         </div>
 
@@ -42,10 +67,5 @@ export default class Home extends LitElement {
         </div>
       </div>
     `;
-  }
-
-  increment() {
-    this.count += 1;
-    this.requestUpdate();
   }
 }
