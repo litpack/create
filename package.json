@@ -3,5 +3,8 @@
   "version": "1.0.9",
   "bin": {
     "create-mehrabi-stack": "./index.js"
+  },
+  "dependencies": {
+    "inquirer": "^11.1.0"
   }
 }

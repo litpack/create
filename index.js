@@ -3,35 +3,43 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const inquirer = require('inquirer');
 
 const projectName = process.argv[2];
-const packageManager = process.argv[3] || 'pnpm';
-
-const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 
 if (!projectName) {
   console.error('Please provide a project name.');
   process.exit(1);
 }
 
-if (!validPackageManagers.includes(packageManager)) {
-  console.error(`Invalid package manager. Please choose one of: ${validPackageManagers.join(', ')}`);
-  process.exit(1);
-}
+const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 
-const templateDir = path.join(__dirname, 'template');
-const targetDir = path.join(process.cwd(), projectName);
+// Ask the user to select a package manager
+inquirer
+  .prompt([
+    {
+      type: 'list',
+      name: 'packageManager',
+      message: 'Please choose a package manager:',
+      choices: validPackageManagers,
+    },
+  ])
+  .then((answers) => {
+    const packageManager = answers.packageManager;
+    const templateDir = path.join(__dirname, 'template');
+    const targetDir = path.join(process.cwd(), projectName);
 
-fs.mkdir(targetDir, { recursive: true }, (err) => {
-  if (err) {
-    console.error(`Error creating project directory: ${err}`);
-    process.exit(1);
-  }
+    fs.mkdir(targetDir, { recursive: true }, (err) => {
+      if (err) {
+        console.error(`Error creating project directory: ${err}`);
+        process.exit(1);
+      }
 
-  copyTemplate(templateDir, targetDir);
-});
+      copyTemplate(templateDir, targetDir, packageManager);
+    });
+  });
 
-function copyTemplate(src, dest) {
+function copyTemplate(src, dest, packageManager) {
   fs.readdir(src, (err, items) => {
     if (err) {
       console.error(`Error reading template directory: ${err}`);
@@ -56,10 +64,10 @@ function copyTemplate(src, dest) {
               console.error(`Error creating directory ${destPath}: ${err}`);
               process.exit(1);
             }
-            copyTemplate(srcPath, destPath);
+            copyTemplate(srcPath, destPath, packageManager);
             copyCount -= 1;
             if (copyCount === 0) {
-              projectCreated();
+              projectCreated(packageManager);
             }
           });
         } else {
@@ -71,7 +79,7 @@ function copyTemplate(src, dest) {
             }
             copyCount -= 1;
             if (copyCount === 0) {
-              projectCreated();
+              projectCreated(packageManager);
             }
           });
         }
@@ -80,7 +88,7 @@ function copyTemplate(src, dest) {
   });
 }
 
-function projectCreated() {
+function projectCreated(packageManager) {
   console.log(`Project ${projectName} created successfully!`);
 
   try {
