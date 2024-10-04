@@ -5,9 +5,17 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const projectName = process.argv[2];
+const packageManager = process.argv[3] || 'pnpm';
+
+const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 
 if (!projectName) {
   console.error('Please provide a project name.');
+  process.exit(1);
+}
+
+if (!validPackageManagers.includes(packageManager)) {
+  console.error(`Invalid package manager. Please choose one of: ${validPackageManagers.join(', ')}`);
   process.exit(1);
 }
 
@@ -76,16 +84,22 @@ function projectCreated() {
   console.log(`Project ${projectName} created successfully!`);
 
   try {
-    execSync('pnpm --version', { stdio: 'ignore' });
-    console.log('pnpm is already installed.');
+    execSync(`${packageManager} --version`, { stdio: 'ignore' });
+    console.log(`${packageManager} is already installed.`);
   } catch {
-    console.log('pnpm is not installed. Please install pnpm to manage dependencies.');
-    console.log('You can install pnpm with the following command:');
-    console.log('npm install -g pnpm');
+    console.log(`${packageManager} is not installed. Please install ${packageManager} to manage dependencies.`);
+    console.log(`You can install ${packageManager} using the following command:`);
+    if (packageManager === 'pnpm') {
+      console.log('npm install -g pnpm');
+    } else if (packageManager === 'yarn') {
+      console.log('npm install -g yarn');
+    } else if (packageManager === 'bun') {
+      console.log('npm install -g bun');
+    }
   }
 
   console.log(`\nTo get started, navigate into your project folder:`);
   console.log(`cd ${projectName}`);
   console.log(`Then, install the dependencies with:`);
-  console.log(`pnpm install`);
+  console.log(`${packageManager} install`);
 }
