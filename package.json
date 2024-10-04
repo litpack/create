@@ -1,6 +1,6 @@
 {
   "name": "create-mehrabi-stack",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "bin": {
     "create-mehrabi-stack": "./index.js"
   },
