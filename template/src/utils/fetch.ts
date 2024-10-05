@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import { injectable, inject } from "inversify";
-import ky, { Options as KyOptions } from "ky";
 import { HttpInterceptor } from "./http-interceptor";
 
 @injectable()
@@ -8,42 +7,49 @@ export class FetchService {
   constructor(@inject("HttpInterceptor") private interceptor: HttpInterceptor) {}
 
   private async request<T>(
-    method: "get" | "post" | "put" | "delete" | "patch",
+    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
     url: string,
-    options?: KyOptions,
+    options?: RequestInit,
     body?: any
   ): Promise<T> {
     const modifiedOptions = this.interceptor.interceptRequest(url, {
+      method,
       ...options,
-      ...(body && { json: body }),
+      ...(body && { body: JSON.stringify(body), headers: { "Content-Type": "application/json", ...options?.headers } }),
     });
 
     try {
-      const response = await ky[method](url, modifiedOptions).json<T>();
-      return this.interceptor.interceptResponse(response); // Ensure this returns type T
+      const response = await fetch(url, modifiedOptions);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return this.interceptor.interceptResponse(data);
     } catch (error: unknown) {
-      console.error(`${method.toUpperCase()} request to ${url} failed:`, error);
+      console.error(`${method} request to ${url} failed:`, error);
       return Promise.reject(error);
     }
   }
 
-  async get<T>(url: string, options?: KyOptions): Promise<T> {
-    return this.request<T>("get", url, options);
+  async get<T>(url: string, options?: RequestInit): Promise<T> {
+    return this.request<T>("GET", url, options);
   }
 
-  async post<T>(url: string, body: any, options?: KyOptions): Promise<T> {
-    return this.request<T>("post", url, options, body);
+  async post<T>(url: string, body: any, options?: RequestInit): Promise<T> {
+    return this.request<T>("POST", url, options, body);
   }
 
-  async put<T>(url: string, body: any, options?: KyOptions): Promise<T> {
-    return this.request<T>("put", url, options, body);
+  async put<T>(url: string, body: any, options?: RequestInit): Promise<T> {
+    return this.request<T>("PUT", url, options, body);
   }
 
-  async delete<T>(url: string, options?: KyOptions): Promise<T> {
-    return this.request<T>("delete", url, options);
+  async delete<T>(url: string, options?: RequestInit): Promise<T> {
+    return this.request<T>("DELETE", url, options);
   }
 
-  async patch<T>(url: string, body: any, options?: KyOptions): Promise<T> {
-    return this.request<T>("patch", url, options, body);
+  async patch<T>(url: string, body: any, options?: RequestInit): Promise<T> {
+    return this.request<T>("PATCH", url, options, body);
   }
 }
