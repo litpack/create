@@ -1,9 +1,8 @@
 import "reflect-metadata";
 import { injectable } from "inversify";
-import { Options as KyOptions } from "ky";
 
 export interface HttpInterceptor {
-  interceptRequest(url: string, options: KyOptions): KyOptions;
+  interceptRequest(url: string, options: RequestInit): RequestInit;
   interceptResponse<T>(response: T): T;
 }
 
@@ -23,7 +22,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
     this.config = { ...this.config, ...config };
   }
 
-  interceptRequest(url: string, options: KyOptions): KyOptions {
+  interceptRequest(url: string, options: RequestInit): RequestInit {
     const headers = {
       ...options.headers,
       ...this.config.headers,
