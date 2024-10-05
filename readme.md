@@ -1,14 +1,12 @@
-
-
-```markdown
 # Frontend Boilerplate with Rspack, Lit.js, Babel, TypeScript, and TailwindCSS
 
-This is a frontend boilerplate project set up using Rspack, Lit.js, TypeScript, TailwindCSS, and Preact Signals, Babel designed to help you quickly start your development process while maintaining modern build optimizations.
+This is a frontend boilerplate project set up using Rspack, Lit.js, TypeScript, TailwindCSS, Preact Signals, and Babel, designed to help you quickly start your development process while maintaining modern build optimizations.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
 - [Scripts](#scripts)
 - [Project Structure](#project-structure)
 - [Development](#development)
@@ -22,7 +20,7 @@ This is a frontend boilerplate project set up using Rspack, Lit.js, TypeScript, 
 - **Hot Module Replacement (HMR)** for efficient development
 - **CSS processing** with TailwindCSS and PostCSS
 - **Optimized asset handling** using Rspack
-- **Compression** of assets for production
+- **Compression of assets** for production
 - **Source maps** for easier debugging in development
 
 ## Getting Started
@@ -93,9 +91,6 @@ This will generate optimized files in the `dist` directory, ready for deployment
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 ```
 
 ### Customization
-
-Feel free to adjust any sections or add additional information that might be relevant to your project. Let me know if you need any further changes!
