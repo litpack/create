@@ -7,14 +7,11 @@ const readline = require('readline');
 
 let projectName = process.argv[2];
 
-if (!projectName) {
-  console.error('Please provide a project name.');
-  process.exit(1);
-}
-
-const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
-
 (async () => {
+  if (!projectName) {
+    projectName = await promptForProjectName();
+  }
+
   projectName = await checkFolderExists(projectName);
 
   const packageManager = await promptPackageManager();
@@ -37,6 +34,20 @@ const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
     process.exit(1);
   }
 })();
+
+async function promptForProjectName() {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    rl.question('Please provide a project name: ', (name) => {
+      rl.close();
+      resolve(name.trim());
+    });
+  });
+}
 
 async function checkFolderExists(name) {
   const targetDir = path.join(process.cwd(), name);
@@ -78,7 +89,7 @@ async function promptPackageManager() {
       type: 'list',
       name: 'packageManager',
       message: 'Please choose a package manager:',
-      choices: validPackageManagers,
+      choices: ['npm', 'yarn', 'pnpm', 'bun'],
     },
   ]);
   return answers.packageManager;
