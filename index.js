@@ -3,8 +3,9 @@
 const fs = require('fs').promises;
 const path = require('path');
 const { execSync } = require('child_process');
+const readline = require('readline');
 
-const projectName = process.argv[2];
+let projectName = process.argv[2];
 
 if (!projectName) {
   console.error('Please provide a project name.');
@@ -14,8 +15,10 @@ if (!projectName) {
 const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
 
 (async () => {
+  projectName = await checkFolderExists(projectName);
+
   const packageManager = await promptPackageManager();
-  
+
   const isInquirerInstalled = await checkInquirerInstalled();
   if (!isInquirerInstalled) {
     console.log('inquirer is not installed. Installing it...');
@@ -34,6 +37,39 @@ const validPackageManagers = ['npm', 'yarn', 'pnpm', 'bun'];
     process.exit(1);
   }
 })();
+
+async function checkFolderExists(name) {
+  const targetDir = path.join(process.cwd(), name);
+
+  try {
+    const stats = await fs.stat(targetDir);
+    if (stats.isDirectory()) {
+      console.log(`The folder "${name}" already exists.`);
+      return await promptForNewProjectName();
+    }
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      console.error(`Error checking directory: ${err}`);
+      process.exit(1);
+    }
+  }
+
+  return name;
+}
+
+function promptForNewProjectName() {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    rl.question('Please provide a new project name: ', (newName) => {
+      rl.close();
+      resolve(newName.trim());
+    });
+  });
+}
 
 async function promptPackageManager() {
   const inquirer = (await import('inquirer')).default;
@@ -69,7 +105,7 @@ async function installInquirer(packageManager) {
 
 async function copyTemplate(src, dest) {
   const items = await fs.readdir(src);
-  
+
   await Promise.all(items.map(async (item) => {
     const srcPath = path.join(src, item);
     const destPath = path.join(dest, item);
