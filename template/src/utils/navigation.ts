@@ -35,94 +35,106 @@ export default class Router {
   async navigate(path: string) {
     const rootElement = document.getElementById("app");
     if (!rootElement) return;
-  
-    const [matchedRoute, remainingPath, params, queryParams] = this.matchRoute(
-      path.split("/").filter(Boolean)
-    );
-  
-    if (matchedRoute) {
-      if (await this.runMiddleware(params)) {
-        if (matchedRoute.beforeEnter) {
-          const canProceed = await matchedRoute.beforeEnter();
-          if (!canProceed) return;
-        }
-  
-        this.setLoading(true);
-  
-        if (matchedRoute.preload) {
-          await this.preloadComponent(matchedRoute);
-        }
-  
-        rootElement.innerHTML = "";
-  
-        if (matchedRoute.layout) {
-          const { default: Layout } = await matchedRoute.layout();
-          const layoutInstance = new Layout();
-          rootElement.appendChild(layoutInstance);
-  
-          const { default: Component } = await matchedRoute.component();
-          const componentInstance = new Component({
-            ...params,
-            ...queryParams,
-          });
-          layoutInstance.appendChild(componentInstance);
-          componentInstance.render();
-  
-          if (remainingPath.length > 0 && matchedRoute.children) {
-            await this.navigateNested(
-              componentInstance,
-              matchedRoute.children,
-              remainingPath
-            );
+
+    try {
+      const [matchedRoute, remainingPath, params, queryParams] = this.matchRoute(
+        path.split("/").filter(Boolean)
+      );
+
+      if (matchedRoute) {
+        if (await this.runMiddleware(params)) {
+          if (matchedRoute.beforeEnter) {
+            const canProceed = await matchedRoute.beforeEnter();
+            if (!canProceed) return;
           }
-        } else {
-          const { default: Component } = await matchedRoute.component();
-          const componentInstance = new Component({
-            ...params,
-            ...queryParams,
-          });
-          rootElement.appendChild(componentInstance);
-          componentInstance.render();
-  
-          // Handle nested routes
-          if (remainingPath.length > 0 && matchedRoute.children) {
-            await this.navigateNested(
-              componentInstance,
-              matchedRoute.children,
-              remainingPath
-            );
+
+          this.setLoading(true);
+
+          if (matchedRoute.preload) {
+            await this.preloadComponent(matchedRoute);
           }
-        }
-  
-        if (matchedRoute.meta) {
-          if (matchedRoute.meta.title) {
-            document.title = matchedRoute.meta.title;
-          }
-          if (matchedRoute.meta.description) {
-            const metaDescription = document.querySelector("meta[name='description']");
-            if (metaDescription) {
-              metaDescription.setAttribute("content", matchedRoute.meta.description);
-            } else {
-              const newMetaDescription = document.createElement("meta");
-              newMetaDescription.name = "description";
-              newMetaDescription.content = matchedRoute.meta.description;
-              document.head.appendChild(newMetaDescription);
+
+          rootElement.innerHTML = "";
+
+          if (matchedRoute.layout) {
+            const { default: Layout } = await matchedRoute.layout();
+            const layoutInstance = new Layout();
+            rootElement.appendChild(layoutInstance);
+
+            const { default: Component } = await matchedRoute.component();
+            const componentInstance = new Component({
+              ...params,
+              ...queryParams,
+            });
+            layoutInstance.appendChild(componentInstance);
+            componentInstance.render();
+
+            if (remainingPath.length > 0 && matchedRoute.children) {
+              await this.navigateNested(
+                componentInstance,
+                matchedRoute.children,
+                remainingPath
+              );
+            }
+          } else {
+            const { default: Component } = await matchedRoute.component();
+            const componentInstance = new Component({
+              ...params,
+              ...queryParams,
+            });
+            rootElement.appendChild(componentInstance);
+            componentInstance.render();
+
+            // Handle nested routes
+            if (remainingPath.length > 0 && matchedRoute.children) {
+              await this.navigateNested(
+                componentInstance,
+                matchedRoute.children,
+                remainingPath
+              );
             }
           }
+
+          this.updateMetaTags(matchedRoute);
+
+          if (matchedRoute.afterEnter) {
+            matchedRoute.afterEnter();
+          }
+
+          this.history.push(path);
+          this.scrollPositions[path] = window.scrollY;
         }
-  
-        if (matchedRoute.afterEnter) {
-          matchedRoute.afterEnter();
-        }
-  
-        this.history.push(path);
-        this.scrollPositions[path] = window.scrollY;
-        this.setLoading(false);
+      } else {
+        await this.handleNotFound(rootElement);
       }
-    } else {
+    } catch (error) {
+      console.error("Navigation error:", error);
+      this.setLoading(false);
       await this.handleNotFound(rootElement);
+    } finally {
+      this.setLoading(false);
     }
   }
+
+  updateMetaTags(matchedRoute: Route) {
+    if (matchedRoute.meta) {
+      if (matchedRoute.meta.title) {
+        document.title = matchedRoute.meta.title;
+      }
+      if (matchedRoute.meta.description) {
+        const metaDescription = document.querySelector("meta[name='description']");
+        if (metaDescription) {
+          metaDescription.setAttribute("content", matchedRoute.meta.description);
+        } else {
+          const newMetaDescription = document.createElement("meta");
+          newMetaDescription.name = "description";
+          newMetaDescription.content = matchedRoute.meta.description;
+          document.head.appendChild(newMetaDescription);
+        }
+      }
+    }
+  }
+
 
   async runMiddleware(params?: any): Promise<boolean> {
     for (const mw of this.middleware) {
@@ -179,11 +191,11 @@ export default class Router {
   matchRoute(
     pathSegments: string[]
   ): [
-    Route | null,
-    string[],
-    { [key: string]: string } | null,
-    { [key: string]: string } | null
-  ] {
+      Route | null,
+      string[],
+      { [key: string]: string } | null,
+      { [key: string]: string } | null
+    ] {
     let currentRoute: Route | null = null;
     let remainingPath = pathSegments;
     let params: { [key: string]: string } | null = null;
