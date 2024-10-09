@@ -35,31 +35,31 @@ export default class Router {
   async navigate(path: string) {
     const rootElement = document.getElementById("app");
     if (!rootElement) return;
-
+  
     const [matchedRoute, remainingPath, params, queryParams] = this.matchRoute(
       path.split("/").filter(Boolean)
     );
-
+  
     if (matchedRoute) {
       if (await this.runMiddleware(params)) {
         if (matchedRoute.beforeEnter) {
           const canProceed = await matchedRoute.beforeEnter();
           if (!canProceed) return;
         }
-
+  
         this.setLoading(true);
-
+  
         if (matchedRoute.preload) {
           await this.preloadComponent(matchedRoute);
         }
-
+  
         rootElement.innerHTML = "";
-
+  
         if (matchedRoute.layout) {
           const { default: Layout } = await matchedRoute.layout();
           const layoutInstance = new Layout();
           rootElement.appendChild(layoutInstance);
-
+  
           const { default: Component } = await matchedRoute.component();
           const componentInstance = new Component({
             ...params,
@@ -67,7 +67,7 @@ export default class Router {
           });
           layoutInstance.appendChild(componentInstance);
           componentInstance.render();
-
+  
           if (remainingPath.length > 0 && matchedRoute.children) {
             await this.navigateNested(
               componentInstance,
@@ -83,7 +83,8 @@ export default class Router {
           });
           rootElement.appendChild(componentInstance);
           componentInstance.render();
-
+  
+          // Handle nested routes
           if (remainingPath.length > 0 && matchedRoute.children) {
             await this.navigateNested(
               componentInstance,
@@ -92,18 +93,31 @@ export default class Router {
             );
           }
         }
-
+  
+        if (matchedRoute.meta) {
+          if (matchedRoute.meta.title) {
+            document.title = matchedRoute.meta.title;
+          }
+          if (matchedRoute.meta.description) {
+            const metaDescription = document.querySelector("meta[name='description']");
+            if (metaDescription) {
+              metaDescription.setAttribute("content", matchedRoute.meta.description);
+            } else {
+              const newMetaDescription = document.createElement("meta");
+              newMetaDescription.name = "description";
+              newMetaDescription.content = matchedRoute.meta.description;
+              document.head.appendChild(newMetaDescription);
+            }
+          }
+        }
+  
         if (matchedRoute.afterEnter) {
           matchedRoute.afterEnter();
         }
-
+  
         this.history.push(path);
         this.scrollPositions[path] = window.scrollY;
         this.setLoading(false);
-
-        if (matchedRoute.meta && matchedRoute.meta.title) {
-          document.title = matchedRoute.meta.title;
-        }
       }
     } else {
       await this.handleNotFound(rootElement);
