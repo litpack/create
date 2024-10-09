@@ -1,8 +1,12 @@
 {
+  "name": "mehrabi-stack",
+  "version": "0.0.1",
+  "sideEffects": false,
   "scripts": {
     "clean": "rimraf dist",
     "build": "rspack build --mode=production",
-    "start": "rspack serve --mode=development"
+    "start": "rspack serve --mode=development",
+    "analyze": "rspack build --mode=production --analyze"
   },
   "devDependencies": {
     "@babel/core": "^7.25.7",

@@ -101,6 +101,8 @@ module.exports = {
     ],
     sideEffects: false,
     usedExports: true,
+    concatenateModules: true,
+    providedExports: true,
     moduleIds: 'deterministic',
   },
   plugins: [
