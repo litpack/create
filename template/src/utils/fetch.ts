@@ -1,10 +1,12 @@
 import "reflect-metadata";
 import { injectable, inject } from "inversify";
-import { HttpInterceptor } from "./http-interceptor";
+import { MyHttpInterceptor } from "@/utils/http-interceptor";
 
 @injectable()
 export class FetchService {
-  constructor(@inject("HttpInterceptor") private interceptor: HttpInterceptor) {}
+  constructor(
+    @inject(MyHttpInterceptor) private interceptor: MyHttpInterceptor
+  ) { }
 
   private async request<T>(
     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
@@ -15,7 +17,13 @@ export class FetchService {
     const modifiedOptions = this.interceptor.interceptRequest(url, {
       method,
       ...options,
-      ...(body && { body: JSON.stringify(body), headers: { "Content-Type": "application/json", ...options?.headers } }),
+      ...(body && {
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+          ...options?.headers,
+        },
+      }),
     });
 
     try {

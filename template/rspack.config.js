@@ -38,6 +38,7 @@ module.exports = {
               "@babel/plugin-transform-class-properties",
               "@babel/plugin-syntax-dynamic-import",
               ["transform-define", { "process.env.LIT_DEV_MODE": "'false'" }],
+              "babel-plugin-transform-typescript-metadata"
             ],
           },
         },
@@ -152,4 +153,7 @@ module.exports = {
       writeToDisk: false,
     },
   },
+  // stats: {
+  //   children: true,
+  // },
 };
