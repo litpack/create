@@ -1,10 +1,15 @@
 {
   "name": "@litpack/app",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "bin": {
     "litpack": "./index.js"
   },
   "dependencies": {
     "inquirer": "^11.1.0"
+  },
+  "description": "A CLI tool to create Lit.js projects",
+  "license": "MIT",
+  "scripts": {
+    "create": "node ./index.js"
   }
 }
