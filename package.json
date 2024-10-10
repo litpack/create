@@ -1,6 +1,6 @@
 {
   "name": "@litpack/create-litpack",
-  "version": "1.0.37",
+  "version": "0.0.1",
   "bin": {
     "@litpack/create-litpack": "./index.js"
   },
