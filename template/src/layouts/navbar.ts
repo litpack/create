@@ -1,8 +1,8 @@
-import { html, css, LitElement } from "lit";
-import { PageComponent } from "@/decorators/page-component";
+import { LayoutComponent } from "@/decorators/layout-component";
+import { css, html, LitElement } from "lit";
 
-@PageComponent({ tag: "navbar-layout" })
-export default class NotFound extends LitElement {
+@LayoutComponent({ tag: 'navbar-layout' })
+export default class Navbar extends LitElement {
   static styles = css``;
 
   render() {
