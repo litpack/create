@@ -1,8 +1,8 @@
 {
-  "name": "@litpack/create-litpack",
+  "name": "@litpack/init",
   "version": "0.0.1",
   "bin": {
-    "@litpack/create-litpack": "./index.js"
+    "@litpack/init": "./index.js"
   },
   "dependencies": {
     "inquirer": "^11.1.0"
