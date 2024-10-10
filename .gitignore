@@ -1,3 +1,2 @@
-node_modules/
-pnpm-lock.yaml
-template/pnpm-lock.yaml
+node_modules
+dist
