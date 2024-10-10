@@ -15,7 +15,7 @@ module.exports = {
     globalObject: "self",
     assetModuleFilename: "assets/[hash][ext][query]",
   },
-  
+
   mode: isProduction ? "production" : "development",
   devtool: isProduction ? false : "source-map",
   module: {
@@ -38,7 +38,7 @@ module.exports = {
               "@babel/plugin-transform-class-properties",
               "@babel/plugin-syntax-dynamic-import",
               ["transform-define", { "process.env.LIT_DEV_MODE": "'false'" }],
-              "babel-plugin-transform-typescript-metadata"
+              "babel-plugin-transform-typescript-metadata",
             ],
           },
         },
@@ -92,19 +92,29 @@ module.exports = {
         terserOptions: {
           compress: {
             drop_console: isProduction,
+            unused: true,
+            dead_code: true,
+            booleans: true,
+            conditionals: true,
+            sequences: true,
+            passes: 3,
+            collapse_vars: true,
+            reduce_vars: true,
           },
-          output: {
+          mangle: true,
+          format: {
             comments: false,
           },
         },
         extractComments: false,
+        parallel: true,
       }),
     ],
     sideEffects: false,
     usedExports: true,
     concatenateModules: true,
     providedExports: true,
-    moduleIds: 'deterministic',
+    moduleIds: "deterministic",
   },
   plugins: [
     new HtmlWebpackPlugin({
