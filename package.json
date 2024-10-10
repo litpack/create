@@ -1,8 +1,8 @@
 {
-  "name": "create-mehrabi-stack",
+  "name": "@litpack/create-litpack",
   "version": "1.0.37",
   "bin": {
-    "create-mehrabi-stack": "./index.js"
+    "@litpack/create-litpack": "./index.js"
   },
   "dependencies": {
     "inquirer": "^11.1.0"
