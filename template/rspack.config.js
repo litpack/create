@@ -3,6 +3,9 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path");
 const rspack = require("@rspack/core");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const PurgeCSSPlugin = require("purgecss-webpack-plugin").PurgeCSSPlugin;
+const glob = require("glob");
 const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
@@ -109,6 +112,7 @@ module.exports = {
         extractComments: false,
         parallel: true,
       }),
+      new CssMinimizerPlugin(),
     ],
     sideEffects: false,
     usedExports: true,
@@ -130,6 +134,11 @@ module.exports = {
     new rspack.CssExtractRspackPlugin(),
     ...(isProduction
       ? [
+          new PurgeCSSPlugin({
+            paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, {
+              nodir: true,
+            }),
+          }),
           new CompressionPlugin({
             filename: "[name].[contenthash].js.gz",
             algorithm: "gzip",
