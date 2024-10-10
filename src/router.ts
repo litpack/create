@@ -16,7 +16,7 @@ const routers: { [key: string]: Route } = {
   "/gallery": {
     component: () => import("@/pages/image-gallery"),
     preload: false,
-    meta: { title: "gallery", description: "Out image gallery" },
+    meta: { title: "gallery", description: "Our image gallery" },
     layout: () => import("@/layouts/navbar")
   },
   "*": {
