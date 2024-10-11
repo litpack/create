@@ -32,18 +32,13 @@ module.exports = {
       },
       {
         test: /\.(tsx?|jsx?)$/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env", "@babel/preset-typescript"],
-            plugins: [
-              ["@babel/plugin-proposal-decorators", { legacy: true }],
-              "@babel/plugin-transform-class-properties",
-              "@babel/plugin-syntax-dynamic-import",
-              ["transform-define", { "process.env.LIT_DEV_MODE": "'false'" }],
-              "babel-plugin-transform-typescript-metadata",
-            ],
-          },
+        loader: 'esbuild-loader',
+        options: {
+          loader: 'tsx',
+          target: 'es2020',
+          tsconfigRaw: require('./tsconfig.json'),
+          jsxFactory: 'h',
+          jsxFragment: 'Fragment',
         },
       },
       {
