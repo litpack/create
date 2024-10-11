@@ -1,6 +1,6 @@
-# Frontend Boilerplate with Rspack, Lit.js, Babel, TypeScript, and TailwindCSS
+# Frontend Boilerplate with Rspack, Lit.js, esbuild, TypeScript, and TailwindCSS
 
-This is a frontend boilerplate project set up using Rspack, Lit.js, TypeScript, TailwindCSS, Preact Signals, and Babel, designed to help you quickly start your development process while maintaining modern build optimizations.
+This is a frontend boilerplate project set up using Rspack, Lit.js, TypeScript, TailwindCSS, Preact Signals, and esbuild. It is designed to help you quickly start your development process while maintaining modern build optimizations.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This is a frontend boilerplate project set up using Rspack, Lit.js, TypeScript, 
 
 ## Features
 
-- **Modern JavaScript and TypeScript support** with Babel
+- **Modern JavaScript and TypeScript support** with esbuild
 - **Reactive state management** using Preact Signals
 - **Hot Module Replacement (HMR)** for efficient development
 - **CSS processing** with TailwindCSS and PostCSS
