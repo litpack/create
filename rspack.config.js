@@ -32,13 +32,13 @@ module.exports = {
       },
       {
         test: /\.(tsx?|jsx?)$/,
-        loader: 'esbuild-loader',
+        loader: "esbuild-loader",
         options: {
-          loader: 'tsx',
-          target: 'es2020',
-          tsconfigRaw: require('./tsconfig.json'),
-          jsxFactory: 'h',
-          jsxFragment: 'Fragment',
+          loader: "tsx",
+          target: "es2020",
+          tsconfigRaw: require("./tsconfig.json"),
+          jsxFactory: "h",
+          jsxFragment: "Fragment",
         },
       },
       {
@@ -124,15 +124,18 @@ module.exports = {
         collapseWhitespace: true,
         removeRedundantAttributes: true,
       },
-      preload: [".css", ".js"],
+      preload: [".js"], 
     }),
-    new rspack.CssExtractRspackPlugin(),
+    new rspack.CssExtractRspackPlugin({
+      filename: "[name].[contenthash].css",
+    }),
     ...(isProduction
       ? [
           new PurgeCSSPlugin({
-            paths: glob.sync(`${path.join(__dirname, "src")}/**/*`, {
-              nodir: true,
-            }),
+            paths: glob.sync(
+              `${path.join(__dirname, "src")}/**/*.{ts,tsx,html,js,jsx}`,
+              { nodir: true }
+            ),
           }),
           new CompressionPlugin({
             filename: "[name].[contenthash].js.gz",
