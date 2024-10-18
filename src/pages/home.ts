@@ -1,10 +1,12 @@
-import { html, LitElement, PropertyValues } from "lit";
+import { html, LitElement, PropertyValues, unsafeCSS,css } from "lit";
 import "@/components/sample-image";
 import { PageComponent } from "@/decorators/page-component";
 import { signal, computed, effect } from "@lit-labs/preact-signals";
-
+import * as tailwind from '../global.css';
 @PageComponent({ tag: "home-page" })
 export default class Home extends LitElement {
+
+
   count = signal(0);
   name = signal("Jane");
   surname = signal("Doe");
@@ -57,6 +59,11 @@ export default class Home extends LitElement {
     this.name.value = newName;
   }
 
+  static styles = css`
+  @import '../global.css';
+`;
+  
+
   render() {
     return html`
       <div class="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
@@ -96,7 +103,7 @@ export default class Home extends LitElement {
           </button>
         </div>
 
-        <div class="text-center">
+        <div class="text-center flex justify-center">
           <reusable-image
             src="https://via.placeholder.com/300"
             alt="Sample Image"

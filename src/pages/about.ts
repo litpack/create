@@ -37,7 +37,7 @@ export default class About extends LitElement {
           </p>
         </div>
 
-        <div class="text-center">
+        <div class="text-center flex justify-center">
           <reusable-image
             src="https://via.placeholder.com/300"
             alt="Sample Image"
